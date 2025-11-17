@@ -1,13 +1,9 @@
 // Array
 let tasks = [
-	"iniziare l'esercizio",
-	"prendere il caffè",
-	"completare l'esercizio"
-];
-let done = [
-	true,
-	true,
-	false
+	{ name: "iniziare l'esercizio", done: true },
+	{ name: "prendere il caffè", done: true },
+	{ name: "completare l'esercizio", done: true },
+	{ name: "convertire in oggetti", done: false }
 ];
 
 // Riferimenti
@@ -23,10 +19,12 @@ function renderTasks() {
 	for (let i = 0; i < tasks.length; i++) {
 		const li = document.createElement("li");
 
+		const { name, done } = tasks[i];
+
 		// testo
 		const span = document.createElement("span");
-		span.textContent = tasks[i];
-		if (done[i]) span.style.textDecoration = "line-through";
+		span.textContent = name;
+		if (done) { span.style.textDecoration = "line-through"; }
 
 		// button completa
 		const btnComplete = document.createElement("button");
@@ -52,13 +50,18 @@ function renderTasks() {
 form.addEventListener("submit", function (event) {
 	event.preventDefault();
 
-	const text = input.value.trim();
-	console.log(`list.add`, text);
+	const name = input.value.trim();
+	console.log(`list.add`, name);
 
-	if (text === "") return;
+	if (name === "") return;
 
-	tasks.push(text);
-	done.push(false);
+	const newTodo = {
+		name,
+		done: false
+	};
+
+	tasks.push(newTodo);
+
 	input.value = "";
 
 	renderTasks();
@@ -74,21 +77,15 @@ list.addEventListener("click", function (event) {
 	if (!action) return;
 
 	if (action === "toggle") {
-		done[index] = !done[index];
+		tasks[index].done = !tasks[index].done;
 	}
 
 	if (action === "remove") {
 		tasks.splice(index, 1);
-		done.splice(index, 1);
 	}
 
 	renderTasks();
 });
-
-exportBtn.addEventListener("click", function (event) {
-	const fileContent = exportCSV(tasks, done);
-	downloadFile(fileContent, "text/csv", "todo.csv");
-})
 
 // Primo render
 renderTasks();
